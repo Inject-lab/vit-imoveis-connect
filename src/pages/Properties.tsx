@@ -86,14 +86,14 @@ const Properties = () => {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Cidade</label>
                     <Select
-                      value={filters.city}
-                      onValueChange={(value) => setFilters({ city: value })}
+                      value={filters.city || "all"}
+                      onValueChange={(value) => setFilters({ city: value === "all" ? "" : value })}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Todas" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Todas</SelectItem>
+                        <SelectItem value="all">Todas</SelectItem>
                         {cities.map((city) => (
                           <SelectItem key={city} value={city}>
                             {city}
