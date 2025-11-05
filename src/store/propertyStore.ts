@@ -10,6 +10,9 @@ interface PropertyState {
   toggleFavorite: (id: string) => void;
   getFilteredProperties: () => Property[];
   getPropertyById: (id: string) => Property | undefined;
+  addProperty: (property: Property) => void;
+  updateProperty: (id: string, property: Property) => void;
+  deleteProperty: (id: string) => void;
 }
 
 const mockProperties: Property[] = [
@@ -280,5 +283,25 @@ export const usePropertyStore = create<PropertyState>((set, get) => ({
 
   getPropertyById: (id) => {
     return get().properties.find((p) => p.id === id);
-  }
+  },
+
+  addProperty: (property) => set((state) => {
+    const properties = [...state.properties, property];
+    localStorage.setItem('properties', JSON.stringify(properties));
+    return { properties };
+  }),
+
+  updateProperty: (id, updatedProperty) => set((state) => {
+    const properties = state.properties.map((p) => 
+      p.id === id ? updatedProperty : p
+    );
+    localStorage.setItem('properties', JSON.stringify(properties));
+    return { properties };
+  }),
+
+  deleteProperty: (id) => set((state) => {
+    const properties = state.properties.filter((p) => p.id !== id);
+    localStorage.setItem('properties', JSON.stringify(properties));
+    return { properties };
+  })
 }));
