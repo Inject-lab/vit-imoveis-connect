@@ -4,7 +4,7 @@ const WHATSAPP_NUMBER = '5545999020888';
 
 export const getWhatsAppLink = (message: string): string => {
   const encodedMessage = encodeURIComponent(message);
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+  return `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodedMessage}`;
 };
 
 export const getPropertyWhatsAppLink = (property: Property): string => {
