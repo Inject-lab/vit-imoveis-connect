@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,26 +13,29 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  const login = useAuthStore((state) => state.login);
+  const { login, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/admin/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate loading
-    setTimeout(() => {
-      const success = login(email, password);
-      
-      if (success) {
-        toast.success('Login realizado com sucesso!');
-        navigate('/admin/dashboard');
-      } else {
-        toast.error('Email ou senha incorretos');
-      }
-      
-      setIsLoading(false);
-    }, 500);
+    const result = await login(email, password);
+    
+    if (result.success) {
+      toast.success('Login realizado com sucesso!');
+      navigate('/admin/dashboard');
+    } else {
+      toast.error(result.error || 'Email ou senha incorretos');
+    }
+    
+    setIsLoading(false);
   };
 
   return (
@@ -107,7 +110,7 @@ const Login = () => {
 
           {/* Helper Text */}
           <p className="text-center text-sm text-muted-foreground mt-6">
-            Credenciais padrão: admin@silviovitoria.com / silvio2024
+            Faça login com suas credenciais de administrador
           </p>
         </div>
       </div>

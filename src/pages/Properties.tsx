@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import PropertyCard from '@/components/PropertyCard';
@@ -11,12 +11,30 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Search, SlidersHorizontal } from 'lucide-react';
 
 const Properties = () => {
-  const { getFilteredProperties, filters, setFilters, resetFilters, properties } = usePropertyStore();
+  const { getFilteredProperties, filters, setFilters, resetFilters, properties, fetchProperties, loading } = usePropertyStore();
   const [showFilters, setShowFilters] = useState(false);
   const filteredProperties = getFilteredProperties();
 
+  useEffect(() => {
+    fetchProperties();
+  }, [fetchProperties]);
+
   const cities = [...new Set(properties.map(p => p.city))];
-  const maxPrice = Math.max(...properties.map(p => p.price));
+  const maxPrice = Math.max(...properties.map(p => p.price), 1000000);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 pt-20 md:pt-24">
+          <div className="container mx-auto px-4 py-8 text-center">
+            <p>Carregando imóveis...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">

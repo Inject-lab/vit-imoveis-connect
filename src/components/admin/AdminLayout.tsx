@@ -116,7 +116,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 A
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium">{user?.name}</p>
+                <p className="text-sm font-medium">Admin</p>
                 <p className="text-xs text-muted-foreground">{user?.email}</p>
               </div>
             </div>

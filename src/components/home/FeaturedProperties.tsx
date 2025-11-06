@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,7 @@ import PropertyCard from '@/components/PropertyCard';
 import { useInView } from 'react-intersection-observer';
 
 const FeaturedProperties = () => {
-  const properties = usePropertyStore((state) => state.properties);
+  const { properties, loading, fetchProperties } = usePropertyStore();
   const featuredProperties = properties
     .filter((p) => p.highlighted && p.status === 'disponivel')
     .slice(0, 6);
@@ -16,6 +17,20 @@ const FeaturedProperties = () => {
     triggerOnce: true,
     threshold: 0.1,
   });
+
+  useEffect(() => {
+    fetchProperties();
+  }, [fetchProperties]);
+
+  if (loading) {
+    return (
+      <section className="py-16 md:py-24 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center">Carregando imóveis...</div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section ref={ref} className="py-16 md:py-24 bg-muted/30">

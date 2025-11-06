@@ -1,18 +1,21 @@
 import { create } from 'zustand';
 import { Property, FilterOptions } from '@/types/property';
+import { supabase } from '@/integrations/supabase/client';
 
 interface PropertyState {
   properties: Property[];
   favorites: string[];
   filters: FilterOptions;
+  loading: boolean;
+  fetchProperties: () => Promise<void>;
   setFilters: (filters: Partial<FilterOptions>) => void;
   resetFilters: () => void;
   toggleFavorite: (id: string) => void;
   getFilteredProperties: () => Property[];
   getPropertyById: (id: string) => Property | undefined;
-  addProperty: (property: Property) => void;
-  updateProperty: (id: string, property: Property) => void;
-  deleteProperty: (id: string) => void;
+  addProperty: (property: Omit<Property, 'id' | 'createdAt'>) => Promise<{ success: boolean; error?: string }>;
+  updateProperty: (id: string, property: Partial<Property>) => Promise<{ success: boolean; error?: string }>;
+  deleteProperty: (id: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 const mockProperties: Property[] = [
@@ -186,10 +189,84 @@ const defaultFilters: FilterOptions = {
   sortBy: 'recent'
 };
 
+// Helper function to convert database row to Property type
+const dbRowToProperty = (row: any): Property => ({
+  id: row.id,
+  title: row.title,
+  description: row.description,
+  type: row.type,
+  status: row.status,
+  price: parseFloat(row.price),
+  city: row.city,
+  neighborhood: row.neighborhood,
+  address: row.address,
+  features: {
+    bedrooms: row.bedrooms,
+    bathrooms: row.bathrooms,
+    garage: row.garages,
+    area: parseFloat(row.area_total),
+    builtArea: row.area_built ? parseFloat(row.area_built) : undefined,
+  },
+  amenities: row.highlights || [],
+  images: Array.isArray(row.images) ? row.images.map((img: any) => img.url) : [],
+  coordinates: row.latitude && row.longitude ? {
+    lat: parseFloat(row.latitude),
+    lng: parseFloat(row.longitude),
+  } : undefined,
+  acceptsExchange: row.accepts_exchange || false,
+  acceptsFinancing: row.accepts_financing || false,
+  highlighted: row.highlighted || false,
+  createdAt: new Date(row.created_at),
+});
+
+// Helper function to convert Property to database row
+const propertyToDbRow = (property: Partial<Property>) => ({
+  title: property.title,
+  description: property.description,
+  type: property.type,
+  status: property.status,
+  price: property.price,
+  city: property.city,
+  state: 'PR', // Default state
+  neighborhood: property.neighborhood,
+  address: property.address,
+  bedrooms: property.features?.bedrooms || 0,
+  bathrooms: property.features?.bathrooms || 0,
+  garages: property.features?.garage || 0,
+  area_total: property.features?.area || 0,
+  area_built: property.features?.builtArea,
+  highlights: property.amenities || [],
+  images: property.images?.map((url, index) => ({ id: `${index}`, url, alt: `Imagem ${index + 1}` })) || [],
+  accepts_exchange: property.acceptsExchange || false,
+  accepts_financing: property.acceptsFinancing || false,
+  highlighted: property.highlighted || false,
+  latitude: property.coordinates?.lat,
+  longitude: property.coordinates?.lng,
+});
+
 export const usePropertyStore = create<PropertyState>((set, get) => ({
-  properties: mockProperties,
+  properties: [],
   favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
   filters: defaultFilters,
+  loading: false,
+
+  fetchProperties: async () => {
+    set({ loading: true });
+    try {
+      const { data, error } = await supabase
+        .from('properties')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const properties = data.map(dbRowToProperty);
+      set({ properties, loading: false });
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+      set({ loading: false });
+    }
+  },
 
   setFilters: (newFilters) => set((state) => ({
     filters: { ...state.filters, ...newFilters }
@@ -285,23 +362,70 @@ export const usePropertyStore = create<PropertyState>((set, get) => ({
     return get().properties.find((p) => p.id === id);
   },
 
-  addProperty: (property) => set((state) => {
-    const properties = [...state.properties, property];
-    localStorage.setItem('properties', JSON.stringify(properties));
-    return { properties };
-  }),
+  addProperty: async (property) => {
+    try {
+      const dbRow = propertyToDbRow(property as Property);
+      const { data, error } = await supabase
+        .from('properties')
+        .insert([dbRow])
+        .select()
+        .single();
 
-  updateProperty: (id, updatedProperty) => set((state) => {
-    const properties = state.properties.map((p) => 
-      p.id === id ? updatedProperty : p
-    );
-    localStorage.setItem('properties', JSON.stringify(properties));
-    return { properties };
-  }),
+      if (error) throw error;
 
-  deleteProperty: (id) => set((state) => {
-    const properties = state.properties.filter((p) => p.id !== id);
-    localStorage.setItem('properties', JSON.stringify(properties));
-    return { properties };
-  })
+      const newProperty = dbRowToProperty(data);
+      set((state) => ({
+        properties: [newProperty, ...state.properties]
+      }));
+
+      return { success: true };
+    } catch (error: any) {
+      console.error('Error adding property:', error);
+      return { success: false, error: error.message };
+    }
+  },
+
+  updateProperty: async (id, updatedProperty) => {
+    try {
+      const dbRow = propertyToDbRow(updatedProperty);
+      const { data, error } = await supabase
+        .from('properties')
+        .update(dbRow)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const property = dbRowToProperty(data);
+      set((state) => ({
+        properties: state.properties.map((p) => p.id === id ? property : p)
+      }));
+
+      return { success: true };
+    } catch (error: any) {
+      console.error('Error updating property:', error);
+      return { success: false, error: error.message };
+    }
+  },
+
+  deleteProperty: async (id) => {
+    try {
+      const { error } = await supabase
+        .from('properties')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      set((state) => ({
+        properties: state.properties.filter((p) => p.id !== id)
+      }));
+
+      return { success: true };
+    } catch (error: any) {
+      console.error('Error deleting property:', error);
+      return { success: false, error: error.message };
+    }
+  }
 }));
