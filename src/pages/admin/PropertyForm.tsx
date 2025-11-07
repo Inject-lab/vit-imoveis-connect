@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Save, X, Plus, Trash2, Star } from 'lucide-react';
+import { Save, X, Plus, Trash2, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -88,7 +88,7 @@ const PropertyForm = () => {
     const files = e.target.files;
     if (!files) return;
 
-    const maxImages = 15;
+    const maxImages = 20;
     const maxSize = 5 * 1024 * 1024; // 5MB
 
     Array.from(files).forEach((file) => {
@@ -108,6 +108,20 @@ const PropertyForm = () => {
       };
       reader.readAsDataURL(file);
     });
+  };
+
+  const handleMoveImageLeft = (index: number) => {
+    if (index === 0) return;
+    const newImages = [...images];
+    [newImages[index - 1], newImages[index]] = [newImages[index], newImages[index - 1]];
+    setImages(newImages);
+  };
+
+  const handleMoveImageRight = (index: number) => {
+    if (index === images.length - 1) return;
+    const newImages = [...images];
+    [newImages[index], newImages[index + 1]] = [newImages[index + 1], newImages[index]];
+    setImages(newImages);
   };
 
   const handleRemoveImage = (index: number) => {
@@ -508,7 +522,7 @@ const PropertyForm = () => {
               Imagens <span className="text-destructive">*</span>
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              {images.length}/15 imagens • Máximo 5MB por imagem
+              {images.length}/20 imagens • Máximo 5MB por imagem • Use as setas para reordenar
             </p>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -520,7 +534,7 @@ const PropertyForm = () => {
                 onChange={handleImageUpload}
                 className="hidden"
                 id="image-upload"
-                disabled={images.length >= 15}
+                disabled={images.length >= 20}
               />
               <label
                 htmlFor="image-upload"
@@ -544,7 +558,7 @@ const PropertyForm = () => {
                       alt={`Imagem ${index + 1}`}
                       className="w-full h-32 object-cover rounded-lg border"
                     />
-                    <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                    <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs font-medium">
                       {index + 1}
                     </div>
                     {index === 0 && (
@@ -552,10 +566,31 @@ const PropertyForm = () => {
                         <Star className="w-4 h-4" fill="currentColor" />
                       </div>
                     )}
+                    <div className="absolute bottom-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        type="button"
+                        onClick={() => handleMoveImageLeft(index)}
+                        disabled={index === 0}
+                        className="bg-primary text-primary-foreground p-1 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90"
+                        title="Mover para esquerda"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleMoveImageRight(index)}
+                        disabled={index === images.length - 1}
+                        className="bg-primary text-primary-foreground p-1 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90"
+                        title="Mover para direita"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
                     <button
                       type="button"
                       onClick={() => handleRemoveImage(index)}
-                      className="absolute bottom-2 right-2 bg-destructive text-destructive-foreground p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute bottom-2 right-2 bg-destructive text-destructive-foreground p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/90"
+                      title="Remover imagem"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
