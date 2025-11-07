@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Home, Eye, Pencil, Trash2, Plus, Search } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -24,8 +24,19 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 const AdminProperties = () => {
   const properties = usePropertyStore((state) => state.properties);
   const deleteProperty = usePropertyStore((state) => state.deleteProperty);
+  const fetchProperties = usePropertyStore((state) => state.fetchProperties);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProperties = async () => {
+      setIsLoading(true);
+      await fetchProperties();
+      setIsLoading(false);
+    };
+    loadProperties();
+  }, [fetchProperties]);
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
@@ -119,8 +130,15 @@ const AdminProperties = () => {
           </TabsList>
         </Tabs>
 
-        {/* Table or Empty State */}
-        {filteredProperties.length === 0 ? (
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="bg-background border rounded-lg p-12 text-center">
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+            <p className="text-muted-foreground mt-4">Carregando imóveis...</p>
+          </div>
+        ) : filteredProperties.length === 0 ? (
           <div className="bg-background border rounded-lg p-12 text-center">
             <Home className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">
