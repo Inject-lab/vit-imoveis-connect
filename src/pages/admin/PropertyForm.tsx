@@ -27,6 +27,7 @@ const PropertyForm = () => {
   const addProperty = usePropertyStore((state) => state.addProperty);
   const updateProperty = usePropertyStore((state) => state.updateProperty);
   const getPropertyById = usePropertyStore((state) => state.getPropertyById);
+  const fetchProperties = usePropertyStore((state) => state.fetchProperties);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -196,13 +197,15 @@ const PropertyForm = () => {
 
     try {
       if (isEditing && id) {
-        updateProperty(id, propertyData);
+        await updateProperty(id, propertyData);
         toast.success('Imóvel atualizado com sucesso!');
       } else {
-        addProperty(propertyData);
+        await addProperty(propertyData);
         toast.success('Imóvel criado com sucesso!');
       }
       
+      // Refresh all properties to sync with database
+      await fetchProperties();
       navigate('/admin/imoveis');
     } catch (error) {
       toast.error('Erro ao salvar imóvel');
