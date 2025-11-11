@@ -15,7 +15,7 @@ const Settings = () => {
   const [sellerBio, setSellerBio] = useState(
     'Mais de 30 anos de experiência no mercado imobiliário da região oeste do Paraná, oferecendo os melhores imóveis com atendimento personalizado e transparente.'
   );
-  const [whatsappNumber, setWhatsappNumber] = useState('5545999020888');
+  const [whatsappNumber, setWhatsappNumber] = useState('5545990208888');
   const [metaDescription, setMetaDescription] = useState(
     'Encontre os melhores imóveis para venda e aluguel na região oeste do Paraná com Silvio Vitória. Mais de 30 anos de experiência no mercado.'
   );

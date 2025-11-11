@@ -1,6 +1,6 @@
 import { Property } from '@/types/property';
 
-const WHATSAPP_NUMBER = '5545999020888';
+const WHATSAPP_NUMBER = '5545990208888';
 
 export const getWhatsAppLink = (message: string): string => {
   const encodedMessage = encodeURIComponent(message);
