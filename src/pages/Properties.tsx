@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import PropertyCard from '@/components/PropertyCard';
@@ -13,11 +14,20 @@ import { Search, SlidersHorizontal } from 'lucide-react';
 const Properties = () => {
   const { getFilteredProperties, filters, setFilters, resetFilters, properties, fetchProperties, loading } = usePropertyStore();
   const [showFilters, setShowFilters] = useState(false);
+  const [searchParams] = useSearchParams();
   const filteredProperties = getFilteredProperties();
 
   useEffect(() => {
     fetchProperties();
   }, [fetchProperties]);
+
+  // Apply URL filters on mount
+  useEffect(() => {
+    const typeParam = searchParams.get('type');
+    if (typeParam && (typeParam === 'venda' || typeParam === 'aluguel' || typeParam === 'terreno')) {
+      setFilters({ type: typeParam });
+    }
+  }, [searchParams, setFilters]);
 
   const cities = [...new Set(properties.map(p => p.city))];
   const maxPrice = Math.max(...properties.map(p => p.price), 1000000);
