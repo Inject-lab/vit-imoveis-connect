@@ -184,7 +184,6 @@ const mockProperties: Property[] = [
 const defaultFilters: FilterOptions = {
   searchTerm: '',
   type: 'todos',
-  priceRange: [0, 1000000],
   city: '',
   sortBy: 'recent'
 };
@@ -260,10 +259,7 @@ export const usePropertyStore = create<PropertyState>((set, get) => ({
 
       if (error) throw error;
 
-      console.log('Raw data from Supabase:', data);
       const properties = data.map(dbRowToProperty);
-      console.log('Mapped properties:', properties);
-      console.log('Properties count:', properties.length);
       set({ properties, loading: false });
     } catch (error) {
       console.error('Error fetching properties:', error);
@@ -302,11 +298,6 @@ export const usePropertyStore = create<PropertyState>((set, get) => ({
 
       // Type
       if (filters.type !== 'todos' && property.type !== filters.type) {
-        return false;
-      }
-
-      // Price range
-      if (property.price < filters.priceRange[0] || property.price > filters.priceRange[1]) {
         return false;
       }
 

@@ -33,7 +33,6 @@ export interface Property {
 export interface FilterOptions {
   searchTerm: string;
   type: PropertyType | 'todos';
-  priceRange: [number, number];
   city: string;
   bedrooms?: number;
   bathrooms?: number;

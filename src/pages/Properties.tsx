@@ -7,7 +7,6 @@ import { usePropertyStore } from '@/store/propertyStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Search, SlidersHorizontal } from 'lucide-react';
 
@@ -29,12 +28,7 @@ const Properties = () => {
     }
   }, [searchParams, setFilters]);
 
-  console.log('Properties page - All properties:', properties.length);
-  console.log('Properties page - Filtered properties:', filteredProperties.length);
-  console.log('Properties page - Current filters:', filters);
-
   const cities = [...new Set(properties.map(p => p.city))];
-  const maxPrice = Math.max(...properties.map(p => p.price), 1000000);
 
   if (loading) {
     return (
@@ -133,20 +127,6 @@ const Properties = () => {
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
-
-                  {/* Price Range */}
-                  <div className="space-y-3">
-                    <label className="text-sm font-medium">
-                      Faixa de Preço: até R$ {filters.priceRange[1].toLocaleString('pt-BR')}
-                    </label>
-                    <Slider
-                      min={0}
-                      max={maxPrice}
-                      step={10000}
-                      value={[filters.priceRange[1]]}
-                      onValueChange={(value) => setFilters({ priceRange: [0, value[0]] })}
-                    />
                   </div>
 
                   {/* Bedrooms */}
