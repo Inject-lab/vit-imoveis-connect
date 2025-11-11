@@ -260,7 +260,10 @@ export const usePropertyStore = create<PropertyState>((set, get) => ({
 
       if (error) throw error;
 
+      console.log('Raw data from Supabase:', data);
       const properties = data.map(dbRowToProperty);
+      console.log('Mapped properties:', properties);
+      console.log('Properties count:', properties.length);
       set({ properties, loading: false });
     } catch (error) {
       console.error('Error fetching properties:', error);

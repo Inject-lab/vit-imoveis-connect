@@ -29,6 +29,10 @@ const Properties = () => {
     }
   }, [searchParams, setFilters]);
 
+  console.log('Properties page - All properties:', properties.length);
+  console.log('Properties page - Filtered properties:', filteredProperties.length);
+  console.log('Properties page - Current filters:', filters);
+
   const cities = [...new Set(properties.map(p => p.city))];
   const maxPrice = Math.max(...properties.map(p => p.price), 1000000);
 
