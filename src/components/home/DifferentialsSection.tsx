@@ -25,7 +25,7 @@ const DifferentialsSection = () => {
     {
       icon: MapPin,
       title: 'Múltiplas Localizações',
-      description: 'Imóveis em Cascavel, Foz do Iguaçu, Toledo, Maringá e região',
+      description: 'Imóveis em Cascavel e regiões - PR/SC',
       color: 'bg-secondary',
     },
     {

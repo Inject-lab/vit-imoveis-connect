@@ -10,8 +10,8 @@ const Contact = () => {
     {
       icon: Phone,
       title: 'Telefone / WhatsApp',
-      content: '(45) 99902-0888',
-      link: 'tel:5545999020888',
+      content: '(45) 99020-888',
+      link: 'tel:554599020888',
       color: 'bg-green-500',
     },
     {
@@ -24,7 +24,7 @@ const Contact = () => {
     {
       icon: MapPin,
       title: 'Atendimento',
-      content: 'Cascavel, Foz do Iguaçu, Toledo, Maringá e região',
+      content: 'Cascavel e regiões - PR/SC',
       color: 'bg-secondary',
     },
     {
@@ -118,7 +118,7 @@ const Contact = () => {
                     variant="outline"
                     className="text-base"
                   >
-                    <a href="tel:5545999020888">
+                    <a href="tel:554599020888">
                       <Phone className="w-5 h-5 mr-2" />
                       Ligar Agora
                     </a>

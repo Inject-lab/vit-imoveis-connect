@@ -14,7 +14,7 @@ const AboutSection = () => {
   const benefits = [
     'Aceita até 40% em permuta (carros, casas, apartamentos, terrenos)',
     'Aceita financiamento bancário',
-    'Imóveis em várias cidades (Cascavel, Foz, Toledo, Maringá)',
+    'Imóveis em Cascavel e regiões - PR/SC',
     'Construtor com anos de experiência no mercado',
     'Imóveis próprios - venda direta do construtor',
     'Atendimento personalizado e transparente',

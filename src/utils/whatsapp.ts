@@ -2,7 +2,7 @@ import { Property } from '@/types/property';
 
 // Número do WhatsApp no formato internacional (sem +, espaços ou caracteres especiais)
 // Formato correto: código do país (55) + DDD (45) + número (990208888)
-const WHATSAPP_NUMBER = '5545990208888';
+const WHATSAPP_NUMBER = '554599020888';
 
 /**
  * Gera link do WhatsApp usando formato oficial wa.me

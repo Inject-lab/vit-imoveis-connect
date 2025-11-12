@@ -10,12 +10,12 @@ import { toast } from 'sonner';
 
 const Settings = () => {
   const [sellerName, setSellerName] = useState('Silvio Vitória Sobrinho');
-  const [sellerPhone, setSellerPhone] = useState('5545999020888');
+  const [sellerPhone, setSellerPhone] = useState('554599020888');
   const [sellerEmail, setSellerEmail] = useState('silviovit@hotmail.com');
   const [sellerBio, setSellerBio] = useState(
     'Mais de 30 anos de experiência no mercado imobiliário da região oeste do Paraná, oferecendo os melhores imóveis com atendimento personalizado e transparente.'
   );
-  const [whatsappNumber, setWhatsappNumber] = useState('5545990208888');
+  const [whatsappNumber, setWhatsappNumber] = useState('554599020888');
   const [metaDescription, setMetaDescription] = useState(
     'Encontre os melhores imóveis para venda e aluguel na região oeste do Paraná com Silvio Vitória. Mais de 30 anos de experiência no mercado.'
   );
@@ -85,7 +85,7 @@ const Settings = () => {
                   type="tel"
                   value={sellerPhone}
                   onChange={(e) => setSellerPhone(e.target.value)}
-                  placeholder="5545999020888"
+                  placeholder="554599020888"
                 />
               </div>
 
@@ -130,7 +130,7 @@ const Settings = () => {
                 type="tel"
                 value={whatsappNumber}
                 onChange={(e) => setWhatsappNumber(e.target.value)}
-                placeholder="5545999020888"
+                placeholder="554599020888"
               />
               <p className="text-xs text-muted-foreground">
                 Número usado nos botões de contato (incluir código do país e DDD)

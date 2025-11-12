@@ -46,8 +46,8 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center text-muted-foreground text-sm">
                 <Phone className="w-4 h-4 mr-2 text-primary" />
-                <a href="tel:5545999020888" className="hover:text-primary transition-colors">
-                  (45) 99902-0888
+                <a href="tel:554599020888" className="hover:text-primary transition-colors">
+                  (45) 99020-888
                 </a>
               </li>
               <li className="flex items-center text-muted-foreground text-sm">
@@ -58,7 +58,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start text-muted-foreground text-sm">
                 <MapPin className="w-4 h-4 mr-2 mt-0.5 text-primary flex-shrink-0" />
-                <span>Atendimento em Cascavel, Foz do Iguaçu, Toledo, Maringá e região</span>
+                <span>Atendimento em Cascavel e regiões - PR/SC</span>
               </li>
             </ul>
           </div>
