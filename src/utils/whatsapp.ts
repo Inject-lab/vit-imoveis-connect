@@ -1,9 +1,11 @@
 import { Property } from '@/types/property';
 
+// WhatsApp número correto no formato internacional
 const WHATSAPP_NUMBER = '5545990208888';
 
 export const getWhatsAppLink = (message: string): string => {
   const encodedMessage = encodeURIComponent(message);
+  // Usando formato oficial wa.me conforme documentação WhatsApp
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
 };
 
