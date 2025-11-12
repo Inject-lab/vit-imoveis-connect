@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Bed, Bath, Car, Maximize, MapPin, Share2 } from 'lucide-react';
+import { ArrowLeft, Bed, Bath, Car, Maximize, MapPin, Share2, Expand } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -7,10 +8,13 @@ import { Badge } from '@/components/ui/badge';
 import { usePropertyStore } from '@/store/propertyStore';
 import { getPropertyWhatsAppLink, formatPrice } from '@/utils/whatsapp';
 import NotFound from './NotFound';
+import ImageLightbox from '@/components/ImageLightbox';
 
 const PropertyDetails = () => {
   const { id } = useParams();
   const getPropertyById = usePropertyStore((state) => state.getPropertyById);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   
   const property = id ? getPropertyById(id) : undefined;
 
@@ -56,12 +60,28 @@ const PropertyDetails = () => {
           <div className="lg:col-span-2 space-y-6">
             {/* Images Gallery */}
             <div className="space-y-4">
-              <div className="relative aspect-video rounded-lg overflow-hidden">
+              <div 
+                className="relative aspect-video rounded-lg overflow-hidden cursor-pointer group"
+                onClick={() => {
+                  setLightboxIndex(0);
+                  setLightboxOpen(true);
+                }}
+              >
                 <img
                   src={property.images[0]}
                   alt={property.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
                 />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 rounded-full p-3">
+                    <Expand className="w-6 h-6 text-primary" />
+                  </div>
+                </div>
+                {property.images.length > 1 && (
+                  <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+                    {property.images.length} fotos
+                  </div>
+                )}
               </div>
               
               {property.images.length > 1 && (
@@ -69,13 +89,24 @@ const PropertyDetails = () => {
                   {property.images.slice(1, 5).map((image, index) => (
                     <div
                       key={index}
-                      className="aspect-video rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+                      className="aspect-video rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity group relative"
+                      onClick={() => {
+                        setLightboxIndex(index + 1);
+                        setLightboxOpen(true);
+                      }}
                     >
                       <img
                         src={image}
                         alt={`${property.title} - ${index + 2}`}
                         className="w-full h-full object-cover"
                       />
+                      {index === 3 && property.images.length > 5 && (
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                          <span className="text-white text-xl font-bold">
+                            +{property.images.length - 5}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -243,6 +274,14 @@ const PropertyDetails = () => {
       </main>
 
       <Footer />
+      
+      {/* Image Lightbox */}
+      <ImageLightbox
+        images={property.images}
+        initialIndex={lightboxIndex}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+      />
     </div>
   );
 };
