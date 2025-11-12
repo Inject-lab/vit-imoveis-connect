@@ -7,16 +7,34 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { usePropertyStore } from '@/store/propertyStore';
 import { getPropertyWhatsAppLink, formatPrice } from '@/utils/whatsapp';
+import { useToast } from '@/hooks/use-toast';
 import NotFound from './NotFound';
 import ImageLightbox from '@/components/ImageLightbox';
 
 const PropertyDetails = () => {
   const { id } = useParams();
+  const { toast } = useToast();
   const getPropertyById = usePropertyStore((state) => state.getPropertyById);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   
   const property = id ? getPropertyById(id) : undefined;
+
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: "Link copiado!",
+        description: "O link do imóvel foi copiado para a área de transferência.",
+      });
+    } catch (err) {
+      toast({
+        title: "Erro ao copiar",
+        description: "Não foi possível copiar o link. Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (!property) {
     return <NotFound />;
@@ -242,9 +260,7 @@ const PropertyDetails = () => {
                   variant="outline"
                   size="lg"
                   className="w-full"
-                  onClick={() => {
-                    navigator.clipboard.writeText(window.location.href);
-                  }}
+                  onClick={handleShare}
                 >
                   <Share2 className="w-4 h-4 mr-2" />
                   Compartilhar
